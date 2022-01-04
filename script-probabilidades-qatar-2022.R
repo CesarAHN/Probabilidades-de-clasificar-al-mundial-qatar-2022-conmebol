@@ -6,8 +6,13 @@
 
 library(dplyr)
 library(rvest)
+#devtools::install_github("CesarAHN/datametria")
 library(datametria)
 library(ggplot2)
+library(tidyr)
+library(gt)
+#devtools::install_github("jthomasmock/gtExtras")
+library(gtExtras)
 
 #----------------------
 # Tabla de posiciones. 
@@ -25,6 +30,10 @@ names(tab_pos)[1]<-"SELECCION"
 
 tab_pos$SELECCION<-limpiecito(gsub("(.*)([A-Z][a-z]+)","\\2",tab_pos$SELECCION))
 
+tab_pos %>% as_tibble() %>% gt() %>%
+  gt_theme_espn() %>% tab_header(title = "TABLA DE POSICIONES CONMEBOL - FECHA 14.",
+                                 subtitle = "Clasificatorias al mundial Qatar 2022.")
+
 #------------------------
 # Argentina gana el partido pendiente.
 # Por 3 a 0. 
@@ -36,6 +45,11 @@ tab_pos[1:2,6]<-tab_pos[1:2,6]+c(0,3)
 tab_pos[1:2,7]<-tab_pos[1:2,7]+c(3,0)
 tab_pos[1:2,8]<-tab_pos[1:2,8]+c(-3,3)
 tab_pos[1:2,9]<-tab_pos[1:2,9]+c(0,3)
+
+tab_pos %>% as_tibble() %>% gt() %>%
+  gt_theme_espn() %>% tab_header(title = "TABLA DE POSICIONES CONMEBOL - FECHA 14.",
+                                 subtitle = "Clasificatorias al mundial Qatar 2022.") %>% 
+  tab_source_note("En el supuesto de que Brasil pierda por 3 a 0 contra argentina (Partido pendiente).")
 
 #----------------------
 # Puntaje de juego de visita.
@@ -54,6 +68,10 @@ p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,9,5,6,5,5,5,4,4,2))
 pp<-plyr::join_all(list(p_vist,p_loc,p_exp), by="SELECCION", type = "inner")
 pp<-pp %>% mutate(ratio_vist=rowSums(select(., matches("p1|p3"))/20),
                   ratio_loc=rowSums(select(., matches("p2|p3"))/20))
+
+pp %>% as_tibble() %>% gt() %>%
+  gt_theme_espn() %>% tab_header(title = "ÍNDICE DE DESEMPEÑO DE LOCAL Y VISITANTE PARA CADA UNA DE LAS SELECCIONES", subtitle = "Visita, Local y Situación actual") %>% 
+  tab_source_note("p1=Desempeño Visita.\np2=Desempeño Local.\np3=Desempeño Actual.")
 
 # Creando la función para el montecarlo.
 
@@ -187,6 +205,7 @@ for (i in 1:10000) {
   resul[(10*(i-1)+1):(10*(i-1)+10),]<-clasificatorias(tab_pos,pp)[,c(1,9,10)]
 }
 
+saveRDS(resul, "simulaciones.rds")
 #---
 
 # Puntos.
@@ -216,10 +235,6 @@ resul %>% arrange(SELECCION) %>%
 
 #---
 # Probabilidad por puesto.
-library(tidyr)
-library(gt)
-library(gtExtras)
-
 banderas<-data.frame(SELECCION=sort(unique(resul$SELECCION)),
                      PAIS=c("https://cdn-icons-png.flaticon.com/512/197/197573.png", # Argentina
                             "https://cdn-icons-png.flaticon.com/512/197/197504.png", # Bolivia.
