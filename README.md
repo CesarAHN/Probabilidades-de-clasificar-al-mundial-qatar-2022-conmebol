@@ -351,3 +351,8 @@ resul %>% mutate(clasificacion=case_when(PUESTO<=5~"SI",
 <p align="center">
 <img src="f5.png" width="300px">
 </p>
+
+Para la extracción, limpieza y gráficos del repositorio se usa el
+software R en su totalidad. Si tiene alguna sugerencia o comentario
+puede enviarnos un correo a: <pe.cesar.huamani.n@uni.pe> o
+<cesar.huamani@datametria.com>
