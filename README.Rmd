@@ -290,7 +290,7 @@ resul %>% head(n=20L)
 
 Luego de realizar el cálculo 10,000 veces se obtiene la distribución de puntos que conseguiría cada selección. 
 
-```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=14, fig.height=9}
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=12, fig.height=7}
 resul %>% arrange(SELECCION) %>% 
   ggplot(aes(x=PTS))+
   geom_histogram(fill="sienna2", alpha=.7)+
@@ -308,7 +308,7 @@ resul %>% arrange(SELECCION) %>%
 
 A continuación se muestra la distribución de puestos que obtendría cada selección. 
 
-```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=14, fig.height=9}
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=12, fig.height=7}
 resul %>% arrange(SELECCION) %>% 
   ggplot(aes(x=PUESTO))+
   geom_histogram(fill="skyblue3", alpha=.7)+
