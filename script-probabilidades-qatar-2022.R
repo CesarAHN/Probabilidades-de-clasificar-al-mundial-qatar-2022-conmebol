@@ -54,16 +54,16 @@ tab_pos %>% as_tibble() %>% gt() %>%
 #----------------------
 # Puntaje de juego de visita.
 # De 1 al 10, donde 1 es que le va muy mal jugando de visita y 10 que le va muy bien.
-p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(9,8,5,6,3,5,4,1,2,1))
+p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(8,7,5,5,4,4,4,2,2,1))
 
 # Puntaje de juego de local. 
 # De 1 al 10, donde 1 es que le va muy mal jugando de local y 10 que le va muy bien.
-p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,9,7,6,6,6,5,8,4,3))
+p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,8,7,6,6,5,6,8,4,3))
 
 # Juicio de expertos. 
 # De 1 al 10, donde 1 es que la selección según el experto no tiene un buen juego
 # y 10 si considera el experto que sí tiene un buen juego.
-p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,9,5,6,5,5,5,4,4,2))
+p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,8,5,6,5,4,5,4,4,2))
 
 pp<-plyr::join_all(list(p_vist,p_loc,p_exp), by="SELECCION", type = "inner")
 pp<-pp %>% mutate(ratio_vist=rowSums(select(., matches("p1|p3"))/20),
@@ -233,6 +233,23 @@ resul %>% arrange(SELECCION) %>%
        caption = "Resultados luego de 10,000 repeticiones.\nELABORACIÓN:https://github.com/CesarAHN")+
   theme_bw()
 
+#----
+# Puntos necesarios para clasificar.
+resul %>% group_by(PUESTO) %>% summarise(media=round(mean(PTS)), mediana=median(PTS),
+                                         CV=sd(PTS)/mean(PTS)) %>% 
+  ggplot(aes(x=PUESTO,y=mediana,fill=factor(PUESTO)))+
+  geom_col(show.legend = F, colour="black")+
+  scale_x_continuous(breaks = 1:10)+
+  scale_fill_brewer(palette = "RdBu")+
+  geom_label(aes(x=PUESTO,y=mediana+3, label=mediana), show.legend = F,
+             bg="white", size=6)+
+  labs(title = "PUNTOS NECESARIOS PARA TERMINAR EN CADA PUESTO",
+       y="Puntos necesarios",x="Puestos")+
+  annotate(geom = "rect", xmin = 4.5, xmax = 5.5, ymin= 0, ymax= Inf,
+           fill = "gray20", alpha = 0.3)+
+  theme_bw()+
+  theme(plot.title = element_text(face = "bold"))
+
 #---
 # Probabilidad por puesto.
 banderas<-data.frame(SELECCION=sort(unique(resul$SELECCION)),
@@ -275,11 +292,4 @@ resul %>% mutate(clasificacion=case_when(PUESTO<=5~"SI",
   tab_style(style = list(cell_text(align = "center")),
             locations = list(cells_body(columns = c(NO,SI)))) %>% 
   gt_color_rows(NO:SI, palette = "RColorBrewer::RdBu")
-
-
-
-
-
-
-
 

@@ -23,7 +23,7 @@ USted encuentra todo el código en este repositorio, el archivo se llama
 ## Tabla de posiciones.
 
 Se obtendrá la tabla de posiciones dese la web de espn, actualizado a la
-fecha 2022-01-03. Para esto se usa el método de web scraping.
+fecha 2022-01-27. Para esto se usa el método de web scraping.
 
 ``` r
 tab_pos %>% as_tibble() %>% gt() %>%
@@ -268,26 +268,26 @@ de la función `clasificatorias`.
 ``` r
 resul %>% head(n=20L)
 #    SELECCION PTS PUESTO
-# 1     BRASIL  47      1
+# 1     BRASIL  45      1
 # 2  ARGENTINA  44      2
-# 3    ECUADOR  29      3
-# 4    URUGUAY  25      4
-# 5   COLOMBIA  24      5
-# 6       PERU  24      6
-# 7    BOLIVIA  19      7
+# 3    ECUADOR  30      3
+# 4    BOLIVIA  24      4
+# 5   COLOMBIA  23      5
+# 6    URUGUAY  23      6
+# 7       PERU  21      7
 # 8      CHILE  17      8
-# 9   PARAGUAY  13      9
+# 9   PARAGUAY  14      9
 # 10 VENEZUELA   7     10
-# 11    BRASIL  44      1
-# 12 ARGENTINA  44      2
+# 11    BRASIL  47      1
+# 12 ARGENTINA  38      2
 # 13   ECUADOR  30      3
-# 14   URUGUAY  28      4
-# 15   BOLIVIA  27      5
-# 16  COLOMBIA  20      6
-# 17     CHILE  19      7
-# 18      PERU  17      8
+# 14   URUGUAY  25      4
+# 15  COLOMBIA  22      5
+# 16      PERU  21      6
+# 17     CHILE  20      7
+# 18   BOLIVIA  17      8
 # 19  PARAGUAY  14      9
-# 20 VENEZUELA   7     10
+# 20 VENEZUELA  13     10
 ```
 
 ## Resultados.
@@ -305,6 +305,12 @@ A continuación se muestra la distribución de puestos que obtendría cada
 selección.
 
 ![](README-unnamed-chunk-14-1.png)<!-- -->
+
+### Puntos necesarios para clasificar.
+
+La mediana de los puntos para terminar en cada puesto.
+
+![](README-unnamed-chunk-15-1.png)<!-- -->
 
 ## Probabilidades de terminar en puestos de clasificación.
 
@@ -326,7 +332,7 @@ resul %>% group_by(PAIS) %>% count(PUESTO) %>% mutate(p=n/10000) %>% select(-n) 
 ```
 
 <p align="center">
-<img src="f4.png" width="700px">
+<img src="f33.png" width="700px">
 </p>
 
 ## Probabilidades de clasificar a Qatar 2022.
@@ -349,7 +355,7 @@ resul %>% mutate(clasificacion=case_when(PUESTO<=5~"SI",
 ```
 
 <p align="center">
-<img src="f5.png" width="300px">
+<img src="f55.png" width="300px">
 </p>
 
 Para la extracción, limpieza y gráficos del repositorio se usa el

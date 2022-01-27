@@ -320,6 +320,28 @@ resul %>% arrange(SELECCION) %>%
   theme_bw()
 ```
 
+### Puntos necesarios para clasificar. 
+
+La mediana de los puntos para terminar en cada puesto.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=7, fig.height=5}
+resul %>% group_by(PUESTO) %>% summarise(media=round(mean(PTS)), mediana=median(PTS),
+                                         CV=sd(PTS)/mean(PTS)) %>% 
+  ggplot(aes(x=PUESTO,y=mediana,fill=factor(PUESTO)))+
+  geom_col(show.legend = F, colour="black")+
+  scale_x_continuous(breaks = 1:10)+
+  scale_fill_brewer(palette = "RdBu")+
+  geom_label(aes(x=PUESTO,y=mediana+3, label=mediana), show.legend = F,
+             bg="white", size=6)+
+  labs(title = "PUNTOS NECESARIOS PARA TERMINAR EN CADA PUESTO",
+       y="Puntos necesarios",x="Puestos")+
+  annotate(geom = "rect", xmin = 4.5, xmax = 5.5, ymin= 0, ymax= Inf,
+           fill = "gray20", alpha = 0.3)+
+  theme_bw()+
+  theme(plot.title = element_text(face = "bold"))
+```
+
+
 ## Probabilidades de terminar en puestos de clasificación. 
 
 A continuación se muestra las probabilidades de los puestos en los que finalizaría cada una de las selecciones luego de terminar la fecha 18. 
@@ -354,7 +376,7 @@ resul %>% group_by(PAIS) %>% count(PUESTO) %>% mutate(p=n/10000) %>% select(-n) 
   gt_color_rows(`PUESTO 1`:`PUESTO 10`, palette = "RColorBrewer::RdBu")
 ```
 
-<p align="center"><img src="f4.png" width="700px"></p>
+<p align="center"><img src="f33.png" width="700px"></p>
 
 ## Probabilidades de clasificar a Qatar 2022. 
 
@@ -376,6 +398,6 @@ resul %>% mutate(clasificacion=case_when(PUESTO<=5~"SI",
 
 ```
 
-<p align="center"><img src="f5.png" width="300px"></p>
+<p align="center"><img src="f55.png" width="300px"></p>
 
 Para la extracción, limpieza y gráficos del repositorio se usa el software R en su totalidad. Si tiene alguna sugerencia o comentario puede enviarnos un correo a: pe.cesar.huamani.n@uni.pe o cesar.huamani@datametria.com
