@@ -31,7 +31,7 @@ names(tab_pos)[1]<-"SELECCION"
 tab_pos$SELECCION<-limpiecito(gsub("(.*)([A-Z][a-z]+)","\\2",tab_pos$SELECCION))
 
 tab_pos %>% as_tibble() %>% gt() %>%
-  gt_theme_espn() %>% tab_header(title = "TABLA DE POSICIONES CONMEBOL - FECHA 14.",
+  gt_theme_espn() %>% tab_header(title = paste0("TABLA DE POSICIONES CONMEBOL - FECHA ",max(tab_pos$J),"."),
                                  subtitle = "Clasificatorias al mundial Qatar 2022.")
 
 #------------------------
@@ -47,23 +47,23 @@ tab_pos[1:2,8]<-tab_pos[1:2,8]+c(-3,3)
 tab_pos[1:2,9]<-tab_pos[1:2,9]+c(0,3)
 
 tab_pos %>% as_tibble() %>% gt() %>%
-  gt_theme_espn() %>% tab_header(title = "TABLA DE POSICIONES CONMEBOL - FECHA 14.",
+  gt_theme_espn() %>% tab_header(title = paste0("TABLA DE POSICIONES CONMEBOL - FECHA ",max(tab_pos$J),"."),
                                  subtitle = "Clasificatorias al mundial Qatar 2022.") %>% 
   tab_source_note("En el supuesto de que Brasil pierda por 3 a 0 contra argentina (Partido pendiente).")
 
 #----------------------
 # Puntaje de juego de visita.
 # De 1 al 10, donde 1 es que le va muy mal jugando de visita y 10 que le va muy bien.
-p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(8,7,5,5,4,4,4,2,2,1))
+p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(8,7,5,5,5,4,4,2,2,2))
 
 # Puntaje de juego de local. 
 # De 1 al 10, donde 1 es que le va muy mal jugando de local y 10 que le va muy bien.
-p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,8,7,6,6,5,6,8,4,3))
+p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,8,6,6,6,5,5,8,4,4))
 
 # Juicio de expertos. 
 # De 1 al 10, donde 1 es que la selección según el experto no tiene un buen juego
 # y 10 si considera el experto que sí tiene un buen juego.
-p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,8,5,6,5,4,5,4,4,2))
+p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,8,6,5,5,5,4,4,3,2))
 
 pp<-plyr::join_all(list(p_vist,p_loc,p_exp), by="SELECCION", type = "inner")
 pp<-pp %>% mutate(ratio_vist=rowSums(select(., matches("p1|p3"))/20),
@@ -76,35 +76,6 @@ pp %>% as_tibble() %>% gt() %>%
 # Creando la función para el montecarlo.
 
 clasificatorias<-function(tab_pos,pp){
-  #---------------------
-  # Fecha 15.
-  f15<-c("COLOMBIA","PERU","VENEZUELA","BOLIVIA","PARAGUAY",
-         "URUGUAY","CHILE","ARGENTINA","ECUADOR","BRASIL")
-  bd15<-data.frame()
-  for (i in seq(1,9,by=2)) {
-    d<-(1-(pp[pp$SELECCION==f15[i],6]-pp[pp$SELECCION==f15[i+1],5]))
-    if(d<1){
-      a1<-rbind(data.frame(SELECCION=f15[i], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f15[i+1], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    } else {
-      d<-(1-(pp[pp$SELECCION==f15[i+1],6]-pp[pp$SELECCION==f15[i],5]))
-      a1<-rbind(data.frame(SELECCION=f15[i+1], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f15[i], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    }
-    a1$GC_<-rev(a1$GF_)
-    a1$PTS_<-ifelse(a1$GF_>a1$GC_,3,
-                    ifelse(a1$GF_==a1$GC_,1,0))
-    a1$G_<-ifelse(a1$PTS_==3,1,0)
-    a1$P_<-rev(a1$G_)
-    a1$E_<-ifelse(a1$PTS_==1,1,0) 
-    bd15<-rbind(bd15,a1)
-  }
-  
-  tab_pos15<-left_join(tab_pos,bd15, by="SELECCION")
-  
-  tab_pos15<-tab_pos15 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
-                                  PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)
-  
   #---------------------
   # Fecha 16.
   f16<-c("URUGUAY","VENEZUELA","PERU","ECUADOR","BRASIL","PARAGUAY",
@@ -129,7 +100,7 @@ clasificatorias<-function(tab_pos,pp){
     bd16<-rbind(bd16,a1)
   }
   
-  tab_pos16<-left_join(tab_pos15,bd16, by="SELECCION")
+  tab_pos16<-left_join(tab_pos,bd16, by="SELECCION")
   
   tab_pos16<-tab_pos16 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
                                   PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)

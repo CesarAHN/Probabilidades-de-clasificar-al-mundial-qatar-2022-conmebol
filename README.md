@@ -23,7 +23,7 @@ USted encuentra todo el código en este repositorio, el archivo se llama
 ## Tabla de posiciones.
 
 Se obtendrá la tabla de posiciones dese la web de espn, actualizado a la
-fecha 2022-01-27. Para esto se usa el método de web scraping.
+fecha 2022-01-28. Para esto se usa el método de web scraping.
 
 ``` r
 tab_pos %>% as_tibble() %>% gt() %>%
@@ -100,35 +100,6 @@ La función es la siguiente:
 ``` r
 clasificatorias<-function(tab_pos,pp){
   #---------------------
-  # Fecha 15.
-  f15<-c("COLOMBIA","PERU","VENEZUELA","BOLIVIA","PARAGUAY",
-         "URUGUAY","CHILE","ARGENTINA","ECUADOR","BRASIL")
-  bd15<-data.frame()
-  for (i in seq(1,9,by=2)) {
-    d<-(1-(pp[pp$SELECCION==f15[i],6]-pp[pp$SELECCION==f15[i+1],5]))
-    if(d<1){
-      a1<-rbind(data.frame(SELECCION=f15[i], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f15[i+1], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    } else {
-      d<-(1-(pp[pp$SELECCION==f15[i+1],6]-pp[pp$SELECCION==f15[i],5]))
-      a1<-rbind(data.frame(SELECCION=f15[i+1], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f15[i], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    }
-    a1$GC_<-rev(a1$GF_)
-    a1$PTS_<-ifelse(a1$GF_>a1$GC_,3,
-                    ifelse(a1$GF_==a1$GC_,1,0))
-    a1$G_<-ifelse(a1$PTS_==3,1,0)
-    a1$P_<-rev(a1$G_)
-    a1$E_<-ifelse(a1$PTS_==1,1,0) 
-    bd15<-rbind(bd15,a1)
-  }
-  
-  tab_pos15<-left_join(tab_pos,bd15, by="SELECCION")
-  
-  tab_pos15<-tab_pos15 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
-                                  PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)
-  
-  #---------------------
   # Fecha 16.
   f16<-c("URUGUAY","VENEZUELA","PERU","ECUADOR","BRASIL","PARAGUAY",
          "BOLIVIA","CHILE","ARGENTINA","COLOMBIA")
@@ -152,7 +123,7 @@ clasificatorias<-function(tab_pos,pp){
     bd16<-rbind(bd16,a1)
   }
   
-  tab_pos16<-left_join(tab_pos15,bd16, by="SELECCION")
+  tab_pos16<-left_join(tab_pos,bd16, by="SELECCION")
   
   tab_pos16<-tab_pos16 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
                                   PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)
@@ -271,22 +242,22 @@ resul %>% head(n=20L)
 # 1     BRASIL  45      1
 # 2  ARGENTINA  44      2
 # 3    ECUADOR  30      3
-# 4    BOLIVIA  24      4
-# 5   COLOMBIA  23      5
-# 6    URUGUAY  23      6
-# 7       PERU  21      7
-# 8      CHILE  17      8
-# 9   PARAGUAY  14      9
-# 10 VENEZUELA   7     10
-# 11    BRASIL  47      1
-# 12 ARGENTINA  38      2
+# 4       PERU  26      4
+# 5    URUGUAY  22      5
+# 6      CHILE  19      6
+# 7    BOLIVIA  19      7
+# 8   COLOMBIA  18      8
+# 9   PARAGUAY  16      9
+# 10 VENEZUELA  10     10
+# 11    BRASIL  45      1
+# 12 ARGENTINA  41      2
 # 13   ECUADOR  30      3
 # 14   URUGUAY  25      4
-# 15  COLOMBIA  22      5
-# 16      PERU  21      6
-# 17     CHILE  20      7
-# 18   BOLIVIA  17      8
-# 19  PARAGUAY  14      9
+# 15  COLOMBIA  23      5
+# 16      PERU  23      6
+# 17     CHILE  19      7
+# 18  PARAGUAY  16      8
+# 19   BOLIVIA  15      9
 # 20 VENEZUELA  13     10
 ```
 
@@ -332,7 +303,7 @@ resul %>% group_by(PAIS) %>% count(PUESTO) %>% mutate(p=n/10000) %>% select(-n) 
 ```
 
 <p align="center">
-<img src="f33.png" width="700px">
+<img src="f444.png" width="700px">
 </p>
 
 ## Probabilidades de clasificar a Qatar 2022.
@@ -355,7 +326,7 @@ resul %>% mutate(clasificacion=case_when(PUESTO<=5~"SI",
 ```
 
 <p align="center">
-<img src="f55.png" width="300px">
+<img src="f555.png" width="300px">
 </p>
 
 Para la extracción, limpieza y gráficos del repositorio se usa el

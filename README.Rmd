@@ -135,35 +135,6 @@ La función es la siguiente:
 ```{r}
 clasificatorias<-function(tab_pos,pp){
   #---------------------
-  # Fecha 15.
-  f15<-c("COLOMBIA","PERU","VENEZUELA","BOLIVIA","PARAGUAY",
-         "URUGUAY","CHILE","ARGENTINA","ECUADOR","BRASIL")
-  bd15<-data.frame()
-  for (i in seq(1,9,by=2)) {
-    d<-(1-(pp[pp$SELECCION==f15[i],6]-pp[pp$SELECCION==f15[i+1],5]))
-    if(d<1){
-      a1<-rbind(data.frame(SELECCION=f15[i], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f15[i+1], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    } else {
-      d<-(1-(pp[pp$SELECCION==f15[i+1],6]-pp[pp$SELECCION==f15[i],5]))
-      a1<-rbind(data.frame(SELECCION=f15[i+1], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f15[i], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    }
-    a1$GC_<-rev(a1$GF_)
-    a1$PTS_<-ifelse(a1$GF_>a1$GC_,3,
-                    ifelse(a1$GF_==a1$GC_,1,0))
-    a1$G_<-ifelse(a1$PTS_==3,1,0)
-    a1$P_<-rev(a1$G_)
-    a1$E_<-ifelse(a1$PTS_==1,1,0) 
-    bd15<-rbind(bd15,a1)
-  }
-  
-  tab_pos15<-left_join(tab_pos,bd15, by="SELECCION")
-  
-  tab_pos15<-tab_pos15 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
-                                  PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)
-  
-  #---------------------
   # Fecha 16.
   f16<-c("URUGUAY","VENEZUELA","PERU","ECUADOR","BRASIL","PARAGUAY",
          "BOLIVIA","CHILE","ARGENTINA","COLOMBIA")
@@ -187,7 +158,7 @@ clasificatorias<-function(tab_pos,pp){
     bd16<-rbind(bd16,a1)
   }
   
-  tab_pos16<-left_join(tab_pos15,bd16, by="SELECCION")
+  tab_pos16<-left_join(tab_pos,bd16, by="SELECCION")
   
   tab_pos16<-tab_pos16 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
                                   PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)
@@ -376,7 +347,7 @@ resul %>% group_by(PAIS) %>% count(PUESTO) %>% mutate(p=n/10000) %>% select(-n) 
   gt_color_rows(`PUESTO 1`:`PUESTO 10`, palette = "RColorBrewer::RdBu")
 ```
 
-<p align="center"><img src="f33.png" width="700px"></p>
+<p align="center"><img src="f444.png" width="700px"></p>
 
 ## Probabilidades de clasificar a Qatar 2022. 
 
@@ -398,6 +369,6 @@ resul %>% mutate(clasificacion=case_when(PUESTO<=5~"SI",
 
 ```
 
-<p align="center"><img src="f55.png" width="300px"></p>
+<p align="center"><img src="f555.png" width="300px"></p>
 
 Para la extracción, limpieza y gráficos del repositorio se usa el software R en su totalidad. Si tiene alguna sugerencia o comentario puede enviarnos un correo a: pe.cesar.huamani.n@uni.pe o cesar.huamani@datametria.com
