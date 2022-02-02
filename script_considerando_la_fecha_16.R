@@ -54,16 +54,16 @@ tab_pos %>% as_tibble() %>% gt() %>%
 #----------------------
 # Puntaje de juego de visita.
 # De 1 al 10, donde 1 es que le va muy mal jugando de visita y 10 que le va muy bien.
-p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(8,7,6,5,5,4,4,2,2,2))
+p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(8,7,5,5,5,4,4,2,2,2))
 
 # Puntaje de juego de local. 
 # De 1 al 10, donde 1 es que le va muy mal jugando de local y 10 que le va muy bien.
-p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,8,6,6,6,5,5,5,4,4))
+p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,8,6,6,6,5,5,8,4,4))
 
 # Juicio de expertos. 
 # De 1 al 10, donde 1 es que la selección según el experto no tiene un buen juego
 # y 10 si considera el experto que sí tiene un buen juego.
-p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,8,6,5,5,5,4,4,2,2))
+p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,8,6,5,5,5,4,4,3,2))
 
 pp<-plyr::join_all(list(p_vist,p_loc,p_exp), by="SELECCION", type = "inner")
 pp<-pp %>% mutate(ratio_vist=rowSums(select(., matches("p1|p3"))/20),

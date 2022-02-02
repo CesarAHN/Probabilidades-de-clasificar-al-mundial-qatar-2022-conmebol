@@ -102,16 +102,16 @@ A continuación muestro el puntaje para cada una de las selecciones como el rati
 #----------------------
 # Puntaje de juego de visita.
 # De 1 al 10, donde 1 es que le va muy mal jugando de visita y 10 que le va muy bien.
-p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(9,8,5,6,3,5,4,1,2,1))
+p_vist<-data.frame(SELECCION=tab_pos$SELECCION, p1=c(8,7,6,5,5,4,4,2,2,2))
 
 # Puntaje de juego de local. 
 # De 1 al 10, donde 1 es que le va muy mal jugando de local y 10 que le va muy bien.
-p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,9,7,6,6,6,5,8,4,3))
+p_loc<-data.frame(SELECCION=tab_pos$SELECCION, p2=c(10,8,6,6,6,5,5,5,4,4))
 
 # Juicio de expertos. 
 # De 1 al 10, donde 1 es que la selección según el experto no tiene un buen juego
 # y 10 si considera el experto que sí tiene un buen juego.
-p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,9,5,6,5,5,5,4,4,2))
+p_exp<-data.frame(SELECCION=tab_pos$SELECCION, p3=c(9,8,6,5,5,5,4,4,2,2))
 
 pp<-plyr::join_all(list(p_vist,p_loc,p_exp), by="SELECCION", type = "inner")
 pp<-pp %>% mutate(ratio_vist=rowSums(select(., matches("p1|p3"))/20),
@@ -134,35 +134,6 @@ La función es la siguiente:
 
 ```{r}
 clasificatorias<-function(tab_pos,pp){
-  #---------------------
-  # Fecha 16.
-  f16<-c("URUGUAY","VENEZUELA","PERU","ECUADOR","BRASIL","PARAGUAY",
-         "BOLIVIA","CHILE","ARGENTINA","COLOMBIA")
-  bd16<-data.frame()
-  for (i in seq(1,9,by=2)) {
-    d<-(1-(pp[pp$SELECCION==f16[i],6]-pp[pp$SELECCION==f16[i+1],5]))
-    if(d<1){
-      a1<-rbind(data.frame(SELECCION=f16[i], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f16[i+1], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    } else {
-      d<-(1-(pp[pp$SELECCION==f16[i+1],6]-pp[pp$SELECCION==f16[i],5]))
-      a1<-rbind(data.frame(SELECCION=f16[i+1], GF_=sample(0:4,1, prob = c(1*d/10,2*d/10,3*d/10,4*d/10,(1-d)))),
-                data.frame(SELECCION=f16[i], GF_=sample(0:4,1, prob = c((1-d),5*d/14,4*d/14,3*d/14,2*d/14)))) 
-    }
-    a1$GC_<-rev(a1$GF_)
-    a1$PTS_<-ifelse(a1$GF_>a1$GC_,3,
-                    ifelse(a1$GF_==a1$GC_,1,0))
-    a1$G_<-ifelse(a1$PTS_==3,1,0)
-    a1$P_<-rev(a1$G_)
-    a1$E_<-ifelse(a1$PTS_==1,1,0) 
-    bd16<-rbind(bd16,a1)
-  }
-  
-  tab_pos16<-left_join(tab_pos,bd16, by="SELECCION")
-  
-  tab_pos16<-tab_pos16 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
-                                  PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)
-  
   #---------------------
   # Fecha 17.
   f17<-c("URUGUAY","PERU","COLOMBIA","BOLIVIA","BRASIL","CHILE",
@@ -187,7 +158,7 @@ clasificatorias<-function(tab_pos,pp){
     bd17<-rbind(bd17,a1)
   }
   
-  tab_pos17<-left_join(tab_pos16,bd17, by="SELECCION")
+  tab_pos17<-left_join(tab_pos,bd17, by="SELECCION")
   
   tab_pos17<-tab_pos17 %>% mutate(J=J+1, G=G+G_, E=E+E_, P=P+P_, GF=GF+GF_, GC=GC+GC_,
                                   PTS=PTS+PTS_, DIF=GF-GC) %>% select(1:9) %>% arrange(-PTS)
@@ -347,7 +318,7 @@ resul %>% group_by(PAIS) %>% count(PUESTO) %>% mutate(p=n/10000) %>% select(-n) 
   gt_color_rows(`PUESTO 1`:`PUESTO 10`, palette = "RColorBrewer::RdBu")
 ```
 
-<p align="center"><img src="f444.png" width="700px"></p>
+<p align="center"><img src="f4444.png" width="700px"></p>
 
 ## Probabilidades de clasificar a Qatar 2022. 
 
@@ -369,6 +340,6 @@ resul %>% mutate(clasificacion=case_when(PUESTO<=5~"SI",
 
 ```
 
-<p align="center"><img src="f555.png" width="300px"></p>
+<p align="center"><img src="f5555.png" width="300px"></p>
 
 Para la extracción, limpieza y gráficos del repositorio se usa el software R en su totalidad. Si tiene alguna sugerencia o comentario puede enviarnos un correo a: pe.cesar.huamani.n@uni.pe o cesar.huamani@datametria.com
